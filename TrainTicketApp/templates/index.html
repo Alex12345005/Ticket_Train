@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Zugreise Buchung</title>
+    <script>
+        function toggleBuchungen() {
+            var buchungenListe = document.getElementById("buchungenListe");
+            if (buchungenListe.style.display === "none") {
+                buchungenListe.style.display = "block";
+            } else {
+                buchungenListe.style.display = "none";
+            }
+        }
+        function toggleFormular() {
+            var formular = document.getElementById("buchungsFormular");
+            if (formular.style.display === "none") {
+                formular.style.display = "block";
+            } else {
+                formular.style.display = "none";
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Willkommen zur Zugreise-Buchungsplattform</h1>
+    <button onclick="toggleFormular()">Buchungsformular anzeigen</button>
+    <button onclick="toggleBuchungen()">Alle Buchungen anzeigen</button>
+
+    <div id="buchungsFormular" style="display: none;">
+        <form action="/" method="post">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required><br><br>
+
+            <label for="zugnummer">Zugnummer:</label>
+            <input type="text" id="zugnummer" name="zugnummer" required><br><br>
+
+            <label for="abfahrtsort">Abfahrtsort:</label>
+            <input type="text" id="abfahrtsort" name="abfahrtsort" required><br><br>
+
+            <label for="zielort">Zielort:</label>
+            <input type="text" id="zielort" name="zielort" required><br><br>
+
+            <label for="abfahrtszeit">Abfahrtszeit:</label>
+            <input type="datetime-local" id="abfahrtszeit" name="abfahrtszeit" required><br><br>
+
+            <label for="preis">Preis:</label>
+            <input type="number" id="preis" name="preis" step="0.01" required><br><br>
+
+            <input type="submit" value="Buchung bestätigen">
+        </form>
+    </div>
+
+    <div id="buchungenListe" style="display: none;">
+        <h2>Alle Buchungen</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Zugnummer</th>
+                    <th>Abfahrtsort</th>
+                    <th>Zielort</th>
+                    <th>Abfahrtszeit</th>
+                    <th>Preis (€)</th>
+                    <th>Buchung Stornieren</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for buchung in buchungen %}
+                <tr>
+                    <td>{{ buchung.name }}</td>
+                    <td>{{ buchung.zugnummer }}</td>
+                    <td>{{ buchung.abfahrtsort }}</td>
+                    <td>{{ buchung.zielort }}</td>
+                    <td>{{ buchung.abfahrtszeit.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>{{ buchung.preis }}</td>
+                    <td><a href="/stornieren/{{ buchung.id }}" class="stornieren-btn">Stornieren</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+</body>
+</html>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f8ff; /* Sehr helles Blau als Hintergrund */
+    }
+
+    h1, h2 {
+        color: #003366; /* Dunkelblau */
+    }
+
+    button, input[type=submit] {
+        background-color: #007bff; /* Mittelblau */
+        color: white;
+        border: none;
+        padding: 10px;
+        margin: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    button:hover, input[type=submit]:hover {
+        background-color: #0056b3; /* Etwas dunkleres Blau für Hover-Effekt */
+    }
+
+    form, #buchungenListe {
+        background-color: #e6f0ff; /* Sehr helles Blau */
+        padding: 20px;
+        margin: 10px 0;
+        border-radius: 8px;
+    }
+
+    label {
+        margin-top: 10px;
+    }
+
+    input, select {
+        margin-bottom: 20px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        padding: 10px;
+    }
+
+    .stornieren-btn {
+    color: white;
+    background-color: #ff4d4d; /* Rot */
+    padding: 5px 10px;
+    text-decoration: none;
+    border-radius: 5px;
+    }
+
+    .stornieren-btn:hover {
+        background-color: #cc0000; /* Dunkleres Rot */
+    }
+
+    table {
+    width: 100%;
+    border-collapse: collapse; /* Entfernt doppelte Linien */
+    margin-top: 20px;
+    border: 1px solid #007bff; /* Fügt äußere Begrenzungslinien hinzu */
+    }
+
+    th, td {
+        border: 1px solid #007bff; /* Fügt Linien zwischen Zellen hinzu */
+        padding: 15px; /* Vergrößert den Abstand innerhalb der Zellen */
+        text-align: left;
+    }
+
+    thead th {
+        background-color: #007bff;
+        color: white;
+    }
+
+    tbody tr:nth-child(even) {
+        background-color: #f2f2f2; /* Zebrastreifen-Effekt für bessere Lesbarkeit */
+    }
+
+    tbody tr:hover {
+        background-color: #ddd; /* Hover-Effekt für Zeilen */
+    }
+
+</style>
