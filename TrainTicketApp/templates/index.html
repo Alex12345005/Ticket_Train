@@ -6,21 +6,26 @@
     <script>
         function toggleBuchungen() {
             var buchungenListe = document.getElementById("buchungenListe");
+            var formular = document.getElementById("buchungsFormular");
             if (buchungenListe.style.display === "none") {
                 buchungenListe.style.display = "block";
+                formular.style.display = "none";
             } else {
                 buchungenListe.style.display = "none";
             }
         }
+    
         function toggleFormular() {
             var formular = document.getElementById("buchungsFormular");
+            var buchungenListe = document.getElementById("buchungenListe");
             if (formular.style.display === "none") {
                 formular.style.display = "block";
+                buchungenListe.style.display = "none";
             } else {
                 formular.style.display = "none";
             }
         }
-    </script>
+    </script>    
 </head>
 <body>
     <h1>Willkommen zur Zugreise-Buchungsplattform</h1>
