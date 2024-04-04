@@ -30,12 +30,12 @@ def index():
         db.session.add(neue_buchung)
         try:
             db.session.commit()
-            return redirect(url_for('rechnung', buchungs_id=neue_buchung.id))
+            return redirect(url_for('buchung_bestätigt', buchungs_id=neue_buchung.id))
         except IntegrityError:
             db.session.rollback()
-            return "Es gab einen Fehler bei der Buchung. Bitte versuche es erneut."
+            return redirect(url_for('index'))
     else:
-        buchungen = Buchung.query.filter_by(storniert=False).all()  # Nur aktive Buchungen anzeigen
+        buchungen = Buchung.query.filter_by(storniert=False).all()
         return render_template('index.html', buchungen=buchungen)
 
 @app.route('/stornieren/<int:buchungs_id>')
@@ -51,6 +51,10 @@ def rechnung(buchungs_id):
     buchung = Buchung.query.get_or_404(buchungs_id)
     response = create_pdf(buchung)
     return response
+
+@app.route('/buchung-bestätigt/<int:buchungs_id>')
+def buchung_bestätigt(buchungs_id):
+    return render_template('booking_confirmation.html', buchungs_id=buchungs_id)
 
 def create_pdf(buchung):
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf')

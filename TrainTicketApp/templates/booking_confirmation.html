@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Buchung Bestätigt</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f8ff; /* Sehr helles Blau als Hintergrund */
+            text-align: center; /* Zentriert den Text auf der Seite */
+        }
+
+        h1 {
+            color: #003366; /* Dunkelblau */
+        }
+
+        p {
+            font-size: 18px;
+        }
+
+        .btn {
+            display: inline-block;
+            margin: 20px 10px; /* Fügt etwas Abstand um die Buttons hinzu */
+            padding: 10px 20px;
+            background-color: #007bff; /* Mittelblau */
+            color: white;
+            text-decoration: none;
+            border-radius: 5px; /* Rundet die Ecken der Buttons ab */
+            transition: background-color 0.3s; /* Fügt einen sanften Übergangseffekt hinzu */
+        }
+
+        .btn:hover {
+            background-color: #0056b3; /* Etwas dunkleres Blau für den Hover-Effekt */
+        }
+    </style>
+</head>
+<body>
+    <h1>Ihre Buchung wurde erfolgreich durchgeführt!</h1>
+    <p>Möchten Sie jetzt Ihre Rechnung herunterladen?</p>
+    <a href="/rechnung/{{ buchungs_id }}" class="btn">Rechnung herunterladen</a>
+    <a href="/" class="btn">Zurück zur Startseite</a>
+</body>
+</html>
