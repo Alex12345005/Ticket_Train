@@ -25,6 +25,13 @@
                 formular.style.display = "none";
             }
         }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('showBuchungen')) {
+                toggleBuchungen();
+            }
+        });
     </script>    
 </head>
 <body>

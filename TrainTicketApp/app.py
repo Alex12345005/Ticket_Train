@@ -43,7 +43,7 @@ def stornieren(buchungs_id):
     buchung = Buchung.query.get_or_404(buchungs_id)
     buchung.storniert = True
     db.session.commit()
-    return redirect(url_for('index'))
+    return redirect(url_for('index') + '?showBuchungen=true')
 
 
 @app.route('/rechnung/<int:buchungs_id>')
