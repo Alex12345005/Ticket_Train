@@ -86,7 +86,7 @@
                     <td>{{ buchung.abfahrtsort }}</td>
                     <td>{{ buchung.zielort }}</td>
                     <td>{{ buchung.abfahrtszeit.strftime('%Y-%m-%d %H:%M') }}</td>
-                    <td>{{ buchung.preis }}</td>
+                    <td>{{ "{:.2f}".format(buchung.preis) }} €</td>
                     <td><a href="/stornieren/{{ buchung.id }}" class="stornieren-btn">Stornieren</a></td>
                     <td><a href="/rechnung/{{ buchung.id }}" class="download-btn">Rechnung herunterladen</a></td>
                 </tr>
