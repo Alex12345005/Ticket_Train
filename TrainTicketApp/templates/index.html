@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Zugreise Buchung</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <script>
         function toggleBuchungen() {
             var buchungenListe = document.getElementById("buchungenListe");
@@ -35,10 +36,14 @@
     </script>    
 </head>
 <body>
-    <h1>Willkommen zur Zugreise-Buchungsplattform</h1>
-    <button onclick="toggleFormular()">Buchungsformular anzeigen</button>
-    <button onclick="toggleBuchungen()">Alle Buchungen anzeigen</button>
-    <button onclick="window.location.href='/map'">Bahnhöfe in der Nähe anzeigen</button>
+    <div class="header">
+        <h1>Willkommen zur Zugreise-Buchungsplattform <i class="fas fa-train"></i></h1>
+    </div>
+    <div class="button-group">
+        <button onclick="toggleFormular()"><i class="fas fa-edit"></i> Buchungsformular anzeigen</button>
+        <button onclick="toggleBuchungen()"><i class="fas fa-list"></i> Alle Buchungen anzeigen</button>
+        <button onclick="window.location.href='/map'"><i class="fas fa-map-marked-alt"></i> Bahnhöfe in der Nähe anzeigen</button>
+    </div>
     
     <div id="buchungsFormular" style="display: none;">
         <form action="/" method="post">
@@ -65,7 +70,7 @@
     </div>
 
     <div id="buchungenListe" style="display: none;">
-        <h2>Alle Buchungen</h2>
+        <h2>Alle Buchungen <i class="fas fa-clipboard-list"></i></h2>
         <table>
             <thead>
                 <tr>
@@ -95,6 +100,10 @@
             </tbody>
         </table>
     </div>
+
+    <div class="footer">
+        <p>Kontaktieren Sie uns: info@zugreise.com | Impressum</p>
+    </div>
 </body>
 </html>
 
@@ -102,8 +111,18 @@
     body {
         font-family: Arial, sans-serif;
         margin: 0;
-        padding: 0;
+        padding: 20px;
         background-color: #f0f8ff; /* Sehr helles Blau als Hintergrund */
+    }
+
+    .header, .footer {
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    .button-group {
+        text-align: center;
+        margin: 20px 0;
     }
 
     h1, h2 {
@@ -118,6 +137,11 @@
         margin: 5px;
         border-radius: 5px;
         cursor: pointer;
+        font-size: 16px;
+    }
+
+    button i, .header i, .footer i {
+        margin-right: 5px;
     }
 
     button:hover, input[type=submit]:hover {
@@ -127,8 +151,10 @@
     form, #buchungenListe {
         background-color: #e6f0ff; /* Sehr helles Blau */
         padding: 20px;
-        margin: 10px 0;
+        margin: 10px auto;
         border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        max-width: 1000px;
     }
 
     label {
@@ -140,30 +166,32 @@
         border-radius: 5px;
         border: 1px solid #ccc;
         padding: 10px;
+        width: calc(100% - 22px);
     }
 
-    .stornieren-btn {
-    color: white;
-    background-color: #ff4d4d; /* Rot */
-    padding: 5px 10px;
-    text-decoration: none;
-    border-radius: 5px;
+    .stornieren-btn, .download-btn {
+        color: white;
+        background-color: #ff4d4d; /* Rot bzw. passende Farbe */
+        padding: 5px 10px;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 14px;
     }
 
-    .stornieren-btn:hover {
-        background-color: #cc0000; /* Dunkleres Rot */
+    .stornieren-btn:hover, .download-btn:hover {
+        background-color: #cc0000; /* Dunkleres Rot bzw. passende Farbe */
     }
 
     table {
-    width: 100%;
-    border-collapse: collapse; /* Entfernt doppelte Linien */
-    margin-top: 20px;
-    border: 1px solid #007bff; /* Fügt äußere Begrenzungslinien hinzu */
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        border: 1px solid #007bff;
     }
 
     th, td {
-        border: 1px solid #007bff; /* Fügt Linien zwischen Zellen hinzu */
-        padding: 15px; /* Vergrößert den Abstand innerhalb der Zellen */
+        border: 1px solid #007bff;
+        padding: 15px;
         text-align: left;
     }
 
@@ -173,11 +201,14 @@
     }
 
     tbody tr:nth-child(even) {
-        background-color: #f2f2f2; /* Zebrastreifen-Effekt für bessere Lesbarkeit */
+        background-color: #f2f2f2;
     }
 
     tbody tr:hover {
-        background-color: #ddd; /* Hover-Effekt für Zeilen */
+        background-color: #ddd;
     }
 
+    .footer {
+        font-size: 14px;
+    }
 </style>
