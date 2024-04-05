@@ -91,7 +91,9 @@ def create_pdf(buchung):
 
     return send_file(filepath, as_attachment=True)
 
-
+@app.route('/map')
+def map_view():
+    return render_template('map.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

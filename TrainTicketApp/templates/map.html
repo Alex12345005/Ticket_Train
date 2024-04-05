@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Bahnhöfe in der Nähe</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f8ff; /* Sehr helles Blau als Hintergrund */
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Zentriert die Inhalte horizontal */
+            justify-content: center; /* Zentriert die Inhalte vertikal */
+            height: 100vh; /* Gibt dem Body eine minimale Höhe von 100% der Viewport-Höhe */
+        }
+
+        .map-container {
+            width: 80%; /* Reduzierung der Breite auf 80% des Viewports */
+            max-width: 960px; /* Setzt eine maximale Breite für größere Bildschirme */
+        }
+
+        h3 {
+            color: #003366; /* Dunkelblau */
+            text-align: center;
+            width: 100%; /* Breite der Überschrift an die der Karte anpassen */
+            margin: 0;
+            padding: 20px;
+            background-color: #e6f0ff; /* Sehr helles Blau */
+        }
+
+        #mapid {
+            width: 100%; /* Nutzt die volle Breite des umschließenden Containers */
+            height: 70vh; /* Erhöhung der Höhe auf 70% des Viewports */
+            border: none;
+            margin: 20px 0; /* Fügt Abstand oben und unten hinzu */
+        }
+
+        .back-button {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            background-color: #007bff; /* Mittelblau */
+            color: white;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3; /* Etwas dunkleres Blau für Hover-Effekt */
+        }
+    </style>
+</head>
+<body>
+    <div class="map-container">
+        <h3>Bahnhöfe in Ihrer Nähe</h3>
+        <div id="mapid"></div>
+        <a href="/" class="back-button">Zurück zur Startseite</a>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        var mymap = L.map('mapid').setView([47.1081, 15.7011], 13); // Setzt die Ansicht auf Gleisdorf
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
+            maxZoom: 18,
+        }).addTo(mymap);
+    </script>    
+</body>
+</html>
