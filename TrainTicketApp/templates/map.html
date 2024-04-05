@@ -64,11 +64,32 @@
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
-        var mymap = L.map('mapid').setView([47.1081, 15.7011], 13); // Setzt die Ansicht auf Gleisdorf
+        var mymap = L.map('mapid').setView([47.07, 15.43], 9);
+    
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
             maxZoom: 18,
         }).addTo(mymap);
-    </script>    
+    
+        var stations = [
+            {name: "Graz Hauptbahnhof", lat: 47.0667, lon: 15.4333},
+            {name: "Bruck an der Mur", lat: 47.4105, lon: 15.2772},
+            {name: "Leoben Hauptbahnhof", lat: 47.3820, lon: 15.0946},
+            {name: "Kapfenberg", lat: 47.4425, lon: 15.2860},
+            {name: "Frohnleiten", lat: 47.2739, lon: 15.3194},
+            {name: "Knittelfeld", lat: 47.2153, lon: 14.8227},
+            {name: "Mürzzuschlag", lat: 47.6039, lon: 15.6728},
+            {name: "Leibnitz", lat: 46.7812, lon: 15.5452},
+            {name: "Fehring", lat: 46.9311, lon: 15.8950},
+            {name: "Spielfeld-Straß", lat: 46.7184, lon: 15.6484},
+            {name: "Weiz", lat: 47.2167, lon: 15.6167}
+        ];
+    
+        stations.forEach(function(station) {
+            L.marker([station.lat, station.lon]).addTo(mymap)
+                .bindPopup(station.name);
+        });
+    </script>
+       
 </body>
 </html>
