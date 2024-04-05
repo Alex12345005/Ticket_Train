@@ -1,11 +1,18 @@
 from datetime import datetime
 from flask import Flask, redirect, render_template, request, send_file, url_for
 from models import db, Buchung
+from flask import flash
 from sqlalchemy.exc import IntegrityError
 from reportlab.pdfgen import canvas
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType, Disposition
+from dotenv import load_dotenv
 
+import os
+import base64
 import tempfile
 
+load_dotenv()
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///zugreisen.db'
@@ -14,6 +21,33 @@ db.init_app(app)
 
 with app.app_context():
     db.create_all()
+
+def send_email_with_attachment(to_emails, subject, content, attachment_path):
+    message = Mail(
+        from_email='wadu0185@gmail.com',
+        to_emails=to_emails,
+        subject=subject,
+        html_content=content
+    )
+
+    with open(attachment_path, 'rb') as f:
+        data = f.read()
+    encoded_file = base64.b64encode(data).decode()
+
+    attachedFile = Attachment(
+        FileContent(encoded_file),
+        FileName('Rechnung.pdf'),
+        FileType('application/pdf'),
+        Disposition('attachment')
+    )
+    message.attachment = attachedFile
+
+    try:
+        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+        response = sg.send(message)
+        print(response.status_code, response.body, response.headers)
+    except Exception as e:
+        print(e.message)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -49,7 +83,8 @@ def stornieren(buchungs_id):
 @app.route('/rechnung/<int:buchungs_id>')
 def rechnung(buchungs_id):
     buchung = Buchung.query.get_or_404(buchungs_id)
-    response = create_pdf(buchung)
+    pdf_path = create_pdf(buchung)
+    response = send_file(pdf_path, as_attachment=True)
     return response
 
 @app.route('/buchung-bestätigt/<int:buchungs_id>')
@@ -88,12 +123,28 @@ def create_pdf(buchung):
     c.save()
 
     temp_file.close()
-
-    return send_file(filepath, as_attachment=True)
+    return filepath
 
 @app.route('/map')
 def map_view():
     return render_template('map.html')
+
+
+@app.route('/send-email/<int:buchungs_id>', methods=['POST'])
+def send_email(buchungs_id):
+    buchung = Buchung.query.get_or_404(buchungs_id)
+    pdf_path = create_pdf(buchung)
+
+    user_email = request.form['email']
+
+    send_email_with_attachment(
+        to_emails=user_email,
+        subject="Ihre Rechnung für die Buchung bei Zugreisen",
+        content="Vielen Dank für Ihre Buchung. Im Anhang finden Sie Ihre Rechnung.",
+        attachment_path=pdf_path
+    )
+
+    return redirect(url_for('buchung_bestätigt', buchungs_id=buchungs_id, message='Rechnung erfolgreich gesendet'))
 
 if __name__ == '__main__':
     app.run(debug=True)

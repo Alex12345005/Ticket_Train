@@ -41,5 +41,9 @@
     <p>Möchten Sie jetzt Ihre Rechnung herunterladen?</p>
     <a href="/rechnung/{{ buchungs_id }}" class="btn">Rechnung herunterladen</a>
     <a href="/" class="btn">Zurück zur Startseite</a>
+    <form action="/send-email/{{ buchungs_id }}" method="post">
+        <input type="email" name="email" required placeholder="Ihre E-Mail-Adresse">
+        <input type="submit" value="Rechnung per E-Mail senden" class="btn">
+    </form>    
 </body>
 </html>
