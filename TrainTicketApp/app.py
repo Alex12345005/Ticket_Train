@@ -51,11 +51,14 @@ def send_email_with_attachment(to_emails, subject, content, attachment_path):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    # Definiere abfahrtsort und zielort vorab mit Standardwerten oder leeren Strings
+    abfahrtsort = request.args.get('abfahrtsort', '')
+    zielort = request.args.get('zielort', '')
+
     if request.method == 'POST':
         name = request.form.get('name')
         zugnummer = request.form.get('zugnummer')
-        abfahrtsort = request.form.get('abfahrtsort')
-        zielort = request.form.get('zielort')
+        # Die Variablen abfahrtsort und zielort sind bereits definiert, daher kein erneutes Zuweisen hier
         abfahrtszeit = datetime.strptime(request.form.get('abfahrtszeit'), '%Y-%m-%dT%H:%M')
         preis = float(request.form.get('preis'))
 
@@ -67,10 +70,12 @@ def index():
             return redirect(url_for('buchung_bestätigt', buchungs_id=neue_buchung.id))
         except IntegrityError:
             db.session.rollback()
-            return redirect(url_for('index'))
+            # Bei einem Fehler, stelle sicher, dass du die Seite mit den korrekten Daten neu lädst
+            buchungen = Buchung.query.filter_by(storniert=False).all()
+            return render_template('index.html', buchungen=buchungen, abfahrtsort=abfahrtsort, zielort=zielort)
     else:
         buchungen = Buchung.query.filter_by(storniert=False).all()
-        return render_template('index.html', buchungen=buchungen)
+        return render_template('index.html', buchungen=buchungen, abfahrtsort=abfahrtsort, zielort=zielort)
 
 @app.route('/stornieren/<int:buchungs_id>')
 def stornieren(buchungs_id):
@@ -96,16 +101,13 @@ def create_pdf(buchung):
     filepath = temp_file.name
     c = canvas.Canvas(filepath)
 
-    # Header
     c.setFont("Helvetica-Bold", 14)
     c.drawCentredString(300, 800, "Rechnung für Ihre Buchung")
     c.setFont("Helvetica", 12)
     c.drawString(50, 770, f"Buchungsnummer: {buchung.id}")
 
-    # Trennlinie
     c.line(50, 760, 550, 760)
 
-    # Buchungsdetails
     details_y_start = 740
     details = [
         f"Name: {buchung.name}",

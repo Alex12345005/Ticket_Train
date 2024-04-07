@@ -65,12 +65,12 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
         var mymap = L.map('mapid').setView([47.07, 15.43], 9);
-    
+
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
             maxZoom: 18,
         }).addTo(mymap);
-    
+
         var stations = [
             {name: "Graz Hauptbahnhof", lat: 47.0667, lon: 15.4333},
             {name: "Bruck an der Mur", lat: 47.4105, lon: 15.2772},
@@ -84,12 +84,22 @@
             {name: "Spielfeld-Straß", lat: 46.7184, lon: 15.6484},
             {name: "Weiz", lat: 47.2167, lon: 15.6167}
         ];
-    
+
         stations.forEach(function(station) {
-            L.marker([station.lat, station.lon]).addTo(mymap)
-                .bindPopup(station.name);
+            var marker = L.marker([station.lat, station.lon]).addTo(mymap);
+            marker.bindPopup(`<b>${station.name}</b><br><button onclick="setOrt('abfahrtsort', '${station.name}')">Als Abfahrtsort wählen</button><br><button onclick="setOrt('zielort', '${station.name}')">Als Zielort wählen</button>`);
         });
+
+        function setOrt(typ, name) {
+            if (confirm("Möchten Sie " + name + " als " + (typ === 'abfahrtsort' ? "Abfahrtsort" : "Zielort") + " auswählen?")) {
+                sessionStorage.setItem(typ, name);
+                var abfahrtsort = sessionStorage.getItem('abfahrtsort');
+                var zielort = sessionStorage.getItem('zielort');
+                if (abfahrtsort && zielort) {
+                    window.location.href = `/?abfahrtsort=${encodeURIComponent(abfahrtsort)}&zielort=${encodeURIComponent(zielort)}&autoOpenBookingForm=true`;
+                }
+            }
+        }
     </script>
-       
 </body>
 </html>

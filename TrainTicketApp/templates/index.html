@@ -104,6 +104,46 @@
     <div class="footer">
         <p>Kontaktieren Sie uns: info@zugreise.com | Impressum</p>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const abfahrtsort = urlParams.get('abfahrtsort');
+            const zielort = urlParams.get('zielort');
+            
+            if (abfahrtsort !== null) {
+                document.getElementById('abfahrtsort').value = decodeURIComponent(abfahrtsort);
+            }
+            if (zielort !== null) {
+                document.getElementById('zielort').value = decodeURIComponent(zielort);
+            }
+
+            if (abfahrtsort && zielort) {
+                toggleFormular();
+            }
+        });
+    
+        function toggleBuchungen() {
+            var buchungenListe = document.getElementById("buchungenListe");
+            var formular = document.getElementById("buchungsFormular");
+            if (buchungenListe.style.display === "none") {
+                buchungenListe.style.display = "block";
+                formular.style.display = "none";
+            } else {
+                buchungenListe.style.display = "none";
+            }
+        }
+    
+        function toggleFormular() {
+            var formular = document.getElementById("buchungsFormular");
+            var buchungenListe = document.getElementById("buchungenListe");
+            if (formular.style.display === "none" || formular.style.display === "") {
+                formular.style.display = "block";
+                buchungenListe.style.display = "none";
+            } else {
+                formular.style.display = "none";
+            }
+        }
+    </script>    
 </body>
 </html>
 
