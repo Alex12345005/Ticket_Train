@@ -3,47 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <title>Buchung Bestätigt</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
             background-color: #f0f8ff; /* Sehr helles Blau als Hintergrund */
-            text-align: center; /* Zentriert den Text auf der Seite */
+        }
+
+        .header {
+            text-align: center;
+            margin: 20px 0;
         }
 
         h1 {
             color: #003366; /* Dunkelblau */
         }
 
+        
         p {
-            font-size: 18px;
+            font-size: 16px;
+            text-align: center; /* Zentriert den Paragraphen */
+        }
+
+        .button-group {
+            text-align: center; /* Zentriert die Buttons */
+            margin: 20px;
         }
 
         .btn {
-            display: inline-block;
-            margin: 20px 10px; /* Fügt etwas Abstand um die Buttons hinzu */
-            padding: 10px 20px;
             background-color: #007bff; /* Mittelblau */
             color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
             text-decoration: none;
-            border-radius: 5px; /* Rundet die Ecken der Buttons ab */
-            transition: background-color 0.3s; /* Fügt einen sanften Übergangseffekt hinzu */
+            display: inline-block; /* Ermöglicht die Zentrierung */
         }
 
         .btn:hover {
             background-color: #0056b3; /* Etwas dunkleres Blau für den Hover-Effekt */
         }
+
+        form {
+            text-align: center; /* Zentriert das Formular */
+            margin-top: 20px;
+        }
+
+        input[type="email"], input[type="submit"] {
+            margin-bottom: 20px;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+        }
+
+        input[type="email"] {
+            width: calc(100% - 24px); /* Anpassung der Breite */
+            display: block; /* Block-Element */
+            margin: 10px auto; /* Zentriert das Eingabefeld */
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50; /* Grün */
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: inline-block; /* Ermöglicht die Zentrierung */
+            border-radius: 5px;
+            padding: 10px 24px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049; /* Dunkleres Grün */
+        }
+
+        .footer {
+            font-size: 14px;
+            text-align: center; /* Zentriert den Footer-Text */
+            margin-top: 40px;
+        }
     </style>
 </head>
 <body>
-    <h1>Ihre Buchung wurde erfolgreich durchgeführt!</h1>
-    <p>Möchten Sie jetzt Ihre Rechnung herunterladen?</p>
-    <a href="/rechnung/{{ buchungs_id }}" class="btn">Rechnung herunterladen</a>
-    <a href="/" class="btn">Zurück zur Startseite</a>
+    <div class="header">
+        <h1>Buchung Bestätigt <i class="fas fa-check-circle"></i></h1>
+    </div>
+    <p>Ihre Buchung wurde erfolgreich durchgeführt! Möchten Sie jetzt Ihre Rechnung herunterladen oder per E-Mail erhalten?</p>
+    <div class="button-group">
+        <a href="/rechnung/{{ buchungs_id }}" class="btn"><i class="fas fa-download"></i> Rechnung herunterladen</a>
+        <a href="/" class="btn"><i class="fas fa-home"></i> Zurück zur Startseite</a>
+    </div>
     <form action="/send-email/{{ buchungs_id }}" method="post">
         <input type="email" name="email" required placeholder="Ihre E-Mail-Adresse">
-        <input type="submit" value="Rechnung per E-Mail senden" class="btn">
-    </form>    
+        <input type="submit" value="Rechnung per E-Mail senden">
+    </form>
+    <div class="footer">
+        <p>Kontaktieren Sie uns: info@zugreise.com | Impressum</p>
+    </div>
 </body>
 </html>

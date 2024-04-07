@@ -94,7 +94,7 @@
                     <td>{{ buchung.abfahrtszeit.strftime('%Y-%m-%d %H:%M') }}</td>
                     <td>{{ "{:.2f}".format(buchung.preis) }} €</td>
                     <td><a href="/stornieren/{{ buchung.id }}" class="stornieren-btn">Stornieren</a></td>
-                    <td><a href="/rechnung/{{ buchung.id }}" class="download-btn">Rechnung herunterladen</a></td>
+                    <td><a href="/rechnung/{{ buchung.id }}" class="download-btn"><i class="fas fa-download"></i></a></td>
                 </tr>
                 {% endfor %}
             </tbody>
