@@ -51,14 +51,11 @@ def send_email_with_attachment(to_emails, subject, content, attachment_path):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    # Definiere abfahrtsort und zielort vorab mit Standardwerten oder leeren Strings
-    abfahrtsort = request.args.get('abfahrtsort', '')
-    zielort = request.args.get('zielort', '')
-
     if request.method == 'POST':
         name = request.form.get('name')
         zugnummer = request.form.get('zugnummer')
-        # Die Variablen abfahrtsort und zielort sind bereits definiert, daher kein erneutes Zuweisen hier
+        abfahrtsort = request.form.get('abfahrtsort')
+        zielort = request.form.get('zielort')
         abfahrtszeit = datetime.strptime(request.form.get('abfahrtszeit'), '%Y-%m-%dT%H:%M')
         preis = float(request.form.get('preis'))
 
@@ -70,13 +67,15 @@ def index():
             return redirect(url_for('buchung_bestätigt', buchungs_id=neue_buchung.id))
         except IntegrityError:
             db.session.rollback()
-            # Bei einem Fehler, stelle sicher, dass du die Seite mit den korrekten Daten neu lädst
-            buchungen = Buchung.query.filter_by(storniert=False).all()
-            return render_template('index.html', buchungen=buchungen, abfahrtsort=abfahrtsort, zielort=zielort)
-    else:
-        buchungen = Buchung.query.filter_by(storniert=False).all()
-        return render_template('index.html', buchungen=buchungen, abfahrtsort=abfahrtsort, zielort=zielort)
+            flash('Ein Fehler ist aufgetreten. Die Buchung konnte nicht gespeichert werden.', 'error')
 
+    buchungen = Buchung.query.filter_by(storniert=False).all()
+
+    abfahrtsort = request.args.get('abfahrtsort', '')
+    zielort = request.args.get('zielort', '')
+
+    return render_template('index.html', buchungen=buchungen, abfahrtsort=abfahrtsort, zielort=zielort)
+    
 @app.route('/stornieren/<int:buchungs_id>')
 def stornieren(buchungs_id):
     buchung = Buchung.query.get_or_404(buchungs_id)

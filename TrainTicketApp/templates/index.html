@@ -107,17 +107,19 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const urlParams = new URLSearchParams(window.location.search);
-            const abfahrtsort = urlParams.get('abfahrtsort');
-            const zielort = urlParams.get('zielort');
-            
-            if (abfahrtsort !== null) {
-                document.getElementById('abfahrtsort').value = decodeURIComponent(abfahrtsort);
-            }
-            if (zielort !== null) {
-                document.getElementById('zielort').value = decodeURIComponent(zielort);
-            }
+            const shouldAutoOpenBookingForm = urlParams.get('autoOpenBookingForm');
 
-            if (abfahrtsort && zielort) {
+            if (shouldAutoOpenBookingForm) {
+                const abfahrtsort = urlParams.get('abfahrtsort');
+                const zielort = urlParams.get('zielort');
+                
+                if (abfahrtsort) {
+                    document.getElementById('abfahrtsort').value = decodeURIComponent(abfahrtsort);
+                }
+                if (zielort) {
+                    document.getElementById('zielort').value = decodeURIComponent(zielort);
+                }
+
                 toggleFormular();
             }
         });
