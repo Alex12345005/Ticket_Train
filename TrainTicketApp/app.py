@@ -126,14 +126,17 @@ def index():
                 distanz = calculate_distance(*abfahrtsort_coords, *zielort_coords)
                 preis = distanz * 0.30  
 
-        buchungen = Buchung.query.all()
+        buchungen = Buchung.query.filter_by(storniert=False).all()
         return render_template('index.html', buchungen=buchungen, preis=preis, abfahrtsort=abfahrtsort, zielort=zielort)    
 
 @app.route('/stornieren/<int:buchungs_id>')
 def stornieren(buchungs_id):
+    print("Storniere Buchung mit ID:", buchungs_id)  # Debugging-Ausgabe hinzufügen
     buchung = Buchung.query.get_or_404(buchungs_id)
+    print("Gefundene Buchung:", buchung)  # Debugging-Ausgabe hinzufügen
     buchung.storniert = True
     db.session.commit()
+    print("Buchung erfolgreich storniert")  # Debugging-Ausgabe hinzufügen
     return redirect(url_for('index') + '?showBuchungen=true')
 
 
