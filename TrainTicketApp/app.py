@@ -128,6 +128,7 @@ def index():
 
         buchungen = Buchung.query.all()
         return render_template('index.html', buchungen=buchungen, preis=preis, abfahrtsort=abfahrtsort, zielort=zielort)    
+
 @app.route('/stornieren/<int:buchungs_id>')
 def stornieren(buchungs_id):
     buchung = Buchung.query.get_or_404(buchungs_id)
@@ -166,7 +167,7 @@ def create_pdf(buchung):
         f"Abfahrtsort: {buchung.abfahrtsort}",
         f"Zielort: {buchung.zielort}",
         f"Abfahrtszeit: {buchung.abfahrtszeit.strftime('%Y-%m-%d %H:%M')}",
-        f"Preis: {buchung.preis} Euro"
+        f"Preis: {buchung.preis:.2f} Euro"
     ]
     for detail in details:
         c.drawString(50, details_y_start, detail)
