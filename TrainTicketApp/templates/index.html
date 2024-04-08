@@ -110,7 +110,7 @@
                     <td>{{ buchung.abfahrtsort }}</td>
                     <td>{{ buchung.zielort }}</td>
                     <td>{{ buchung.abfahrtszeit.strftime('%Y-%m-%d %H:%M') }}</td>
-                    <td>{{ "{:.2f}".format(buchung.preis) }} €</td>
+                    <td class="price">{{ "{:.2f}".format(buchung.preis) }} €</td>
                     <td><a href="/stornieren/{{ buchung.id }}" class="stornieren-btn">Stornieren</a></td>
                     <td><a href="/rechnung/{{ buchung.id }}" class="download-btn"><i class="fas fa-download"></i></a></td>
                 </tr>
@@ -242,17 +242,30 @@
         width: calc(100% - 22px);
     }
 
-    .stornieren-btn, .download-btn {
+    .stornieren-btn {
+        background-color: #ff4d4d;
         color: white;
-        background-color: #ff4d4d; 
         padding: 5px 10px;
         text-decoration: none;
         border-radius: 5px;
         font-size: 14px;
     }
 
-    .stornieren-btn:hover, .download-btn:hover {
-        background-color: #cc0000; 
+    .stornieren-btn:hover {
+        background-color: #cc0000;
+    }
+
+    .download-btn {
+        background-color: #007bff;
+        color: white;
+        padding: 5px 10px;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    .download-btn:hover {
+        background-color: #0056b3;
     }
 
     table {
@@ -283,5 +296,9 @@
 
     .footer {
         font-size: 14px;
+    }
+
+    td.price {
+        white-space: nowrap;
     }
 </style>
