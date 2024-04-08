@@ -32,6 +32,18 @@
             if (urlParams.has('showBuchungen')) {
                 toggleBuchungen();
             }
+            const shouldAutoOpenBookingForm = urlParams.get('autoOpenBookingForm');
+            if (shouldAutoOpenBookingForm) {
+                const abfahrtsort = urlParams.get('abfahrtsort');
+                const zielort = urlParams.get('zielort');
+                if (abfahrtsort) {
+                    document.getElementById('abfahrtsort').value = decodeURIComponent(abfahrtsort);
+                }
+                if (zielort) {
+                    document.getElementById('zielort').value = decodeURIComponent(zielort);
+                }
+                toggleFormular();
+            }
         });
     </script>    
 </head>
@@ -54,17 +66,17 @@
             <input type="text" id="zugnummer" name="zugnummer" required><br><br>
 
             <label for="abfahrtsort">Abfahrtsort:</label>
-            <input type="text" id="abfahrtsort" name="abfahrtsort" required><br><br>
+            <input type="text" id="abfahrtsort" name="abfahrtsort" value="{{ abfahrtsort }}" required>
 
             <label for="zielort">Zielort:</label>
-            <input type="text" id="zielort" name="zielort" required><br><br>
+            <input type="text" id="zielort" name="zielort" value="{{ zielort }}" required>
 
             <label for="abfahrtszeit">Abfahrtszeit:</label>
             <input type="datetime-local" id="abfahrtszeit" name="abfahrtszeit" required><br><br>
 
             <label for="preis">Preis:</label>
-            <input type="number" id="preis" name="preis" step="0.01" required><br><br>
-
+            <input type="number" id="preis" name="preis" step="0.01" value="{{ preis|default(0, true)|format('%.2f') }}" readonly>
+            
             <input type="submit" value="Buchung bestätigen">
         </form>
     </div>
@@ -105,56 +117,69 @@
         <p>Kontaktieren Sie uns: info@zugreise.com | Impressum</p>
     </div>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const shouldAutoOpenBookingForm = urlParams.get('autoOpenBookingForm');
+        document.addEventListener('DOMContentLoaded', function() {
+            const departure = sessionStorage.getItem('abfahrtsort');
+            const destination = sessionStorage.getItem('zielort');
+            if (departure) {
+                document.getElementById('abfahrtsort').value = departure;
+            }
+            if (destination) {
+                document.getElementById('zielort').value = destination;
+            }
 
-            if (shouldAutoOpenBookingForm) {
-                const abfahrtsort = urlParams.get('abfahrtsort');
-                const zielort = urlParams.get('zielort');
-                
-                if (abfahrtsort) {
-                    document.getElementById('abfahrtsort').value = decodeURIComponent(abfahrtsort);
+            const priceField = document.getElementById('preis');
+            if (departure && destination && priceField) {
+                const departureCoords = stationCoordinates[departure];
+                const destinationCoords = stationCoordinates[destination];
+                if (departureCoords && destinationCoords) {
+                    const distance = calculateDistance(departureCoords.lat, departureCoords.lon, destinationCoords.lat, destinationCoords.lon);
+                    const price = distance * 0.30;
+                    priceField.value = price.toFixed(2);
                 }
-                if (zielort) {
-                    document.getElementById('zielort').value = decodeURIComponent(zielort);
-                }
-
-                toggleFormular();
             }
         });
-    
-        function toggleBuchungen() {
-            var buchungenListe = document.getElementById("buchungenListe");
-            var formular = document.getElementById("buchungsFormular");
-            if (buchungenListe.style.display === "none") {
-                buchungenListe.style.display = "block";
-                formular.style.display = "none";
-            } else {
-                buchungenListe.style.display = "none";
-            }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = degreesToRadians(lat2-lat1);
+            const dLon = degreesToRadians(lon2-lon1);
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(degreesToRadians(lat1)) * Math.cos(degreesToRadians(lat2)) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2); 
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+            const distance = R * c;
+            return distance;
         }
-    
-        function toggleFormular() {
-            var formular = document.getElementById("buchungsFormular");
-            var buchungenListe = document.getElementById("buchungenListe");
-            if (formular.style.display === "none" || formular.style.display === "") {
-                formular.style.display = "block";
-                buchungenListe.style.display = "none";
-            } else {
-                formular.style.display = "none";
-            }
+
+        function degreesToRadians(degrees) {
+            return degrees * (Math.PI/180);
         }
-    </script>    
+
+        const stationCoordinates = {
+            "Graz Hauptbahnhof": (47.0667, 15.4333),
+            "Bruck an der Mur": (47.4105, 15.2772),
+            "Leoben Hauptbahnhof": (47.3820, 15.0946),
+            "Kapfenberg": (47.4425, 15.2860),
+            "Frohnleiten": (47.2739, 15.3194),
+            "Knittelfeld": (47.2153, 14.8227),
+            "Mürzzuschlag": (47.6039, 15.6728),
+            "Leibnitz": (46.7812, 15.5452),
+            "Fehring": (46.9311, 15.8950),
+            "Spielfeld-Straß": (46.7184, 15.6484),
+            "Weiz": (47.2167, 15.6167)
+        };
+    </script>
 </body>
 </html>
+
 
 <style>
     body {
         font-family: Arial, sans-serif;
         margin: 0;
         padding: 20px;
-        background-color: #f0f8ff; /* Sehr helles Blau als Hintergrund */
+        background-color: #f0f8ff;
     }
 
     .header, .footer {
@@ -168,11 +193,11 @@
     }
 
     h1, h2 {
-        color: #003366; /* Dunkelblau */
+        color: #003366; 
     }
 
     button, input[type=submit] {
-        background-color: #007bff; /* Mittelblau */
+        background-color: #007bff; 
         color: white;
         border: none;
         padding: 10px;
@@ -187,11 +212,11 @@
     }
 
     button:hover, input[type=submit]:hover {
-        background-color: #0056b3; /* Etwas dunkleres Blau für Hover-Effekt */
+        background-color: #0056b3; 
     }
 
     form, #buchungenListe {
-        background-color: #e6f0ff; /* Sehr helles Blau */
+        background-color: #e6f0ff; 
         padding: 20px;
         margin: 10px auto;
         border-radius: 8px;
@@ -213,7 +238,7 @@
 
     .stornieren-btn, .download-btn {
         color: white;
-        background-color: #ff4d4d; /* Rot bzw. passende Farbe */
+        background-color: #ff4d4d; 
         padding: 5px 10px;
         text-decoration: none;
         border-radius: 5px;
@@ -221,7 +246,7 @@
     }
 
     .stornieren-btn:hover, .download-btn:hover {
-        background-color: #cc0000; /* Dunkleres Rot bzw. passende Farbe */
+        background-color: #cc0000; 
     }
 
     table {

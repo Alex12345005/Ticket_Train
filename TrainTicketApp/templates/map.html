@@ -9,40 +9,40 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f0f8ff; /* Sehr helles Blau als Hintergrund */
+            background-color: #f0f8ff; 
             display: flex;
             flex-direction: column;
-            align-items: center; /* Zentriert die Inhalte horizontal */
-            justify-content: center; /* Zentriert die Inhalte vertikal */
-            height: 100vh; /* Gibt dem Body eine minimale Höhe von 100% der Viewport-Höhe */
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
         }
 
         .map-container {
-            width: 80%; /* Reduzierung der Breite auf 80% des Viewports */
-            max-width: 960px; /* Setzt eine maximale Breite für größere Bildschirme */
+            width: 80%; 
+            max-width: 960px; 
         }
 
         h3 {
-            color: #003366; /* Dunkelblau */
+            color: #003366; 
             text-align: center;
-            width: 100%; /* Breite der Überschrift an die der Karte anpassen */
+            width: 100%; 
             margin: 0;
             padding: 20px;
-            background-color: #e6f0ff; /* Sehr helles Blau */
+            background-color: #e6f0ff; 
         }
 
         #mapid {
-            width: 100%; /* Nutzt die volle Breite des umschließenden Containers */
-            height: 70vh; /* Erhöhung der Höhe auf 70% des Viewports */
+            width: 100%; 
+            height: 70vh; 
             border: none;
-            margin: 20px 0; /* Fügt Abstand oben und unten hinzu */
+            margin: 20px 0; 
         }
 
         .back-button {
             display: block;
             width: 200px;
             margin: 20px auto;
-            background-color: #007bff; /* Mittelblau */
+            background-color: #007bff; 
             color: white;
             text-align: center;
             padding: 10px;
@@ -51,7 +51,7 @@
         }
 
         .back-button:hover {
-            background-color: #0056b3; /* Etwas dunkleres Blau für Hover-Effekt */
+            background-color: #0056b3; 
         }
     </style>
 </head>
@@ -65,12 +65,12 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
         var mymap = L.map('mapid').setView([47.07, 15.43], 9);
-
+    
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
             maxZoom: 18,
         }).addTo(mymap);
-
+    
         var stations = [
             {name: "Graz Hauptbahnhof", lat: 47.0667, lon: 15.4333},
             {name: "Bruck an der Mur", lat: 47.4105, lon: 15.2772},
@@ -84,22 +84,24 @@
             {name: "Spielfeld-Straß", lat: 46.7184, lon: 15.6484},
             {name: "Weiz", lat: 47.2167, lon: 15.6167}
         ];
-
+    
         stations.forEach(function(station) {
             var marker = L.marker([station.lat, station.lon]).addTo(mymap);
-            marker.bindPopup(`<b>${station.name}</b><br><button onclick="setOrt('abfahrtsort', '${station.name}')">Als Abfahrtsort wählen</button><br><button onclick="setOrt('zielort', '${station.name}')">Als Zielort wählen</button>`);
+            marker.bindPopup(`<b>${station.name}</b><br><button onclick="confirmOrt('abfahrtsort', '${station.name}')">Als Abfahrtsort wählen</button><br><button onclick="confirmOrt('zielort', '${station.name}')">Als Zielort wählen</button>`);
         });
-
-        function setOrt(typ, name) {
-            if (confirm("Möchten Sie " + name + " als " + (typ === 'abfahrtsort' ? "Abfahrtsort" : "Zielort") + " auswählen?")) {
-                sessionStorage.setItem(typ, name);
-                var abfahrtsort = sessionStorage.getItem('abfahrtsort');
-                var zielort = sessionStorage.getItem('zielort');
-                if (abfahrtsort && zielort) {
-                    window.location.href = `/?abfahrtsort=${encodeURIComponent(abfahrtsort)}&zielort=${encodeURIComponent(zielort)}&autoOpenBookingForm=true`;
-                }
+    
+        function confirmOrt(typ, name) {
+            if (confirm(`Möchten Sie ${name} wirklich als ${typ === 'abfahrtsort' ? 'Abfahrtsort' : 'Zielort'} auswählen?`)) {
+                setOrt(typ, name);
             }
         }
-    </script>
+    
+        function setOrt(typ, name) {
+            sessionStorage.setItem(typ, name);
+            if (sessionStorage.getItem('abfahrtsort') && sessionStorage.getItem('zielort')) {
+                window.location.href = `/?abfahrtsort=${encodeURIComponent(sessionStorage.getItem('abfahrtsort'))}&zielort=${encodeURIComponent(sessionStorage.getItem('zielort'))}&autoOpenBookingForm=true`;
+            }
+        }
+    </script>     
 </body>
 </html>
