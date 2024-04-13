@@ -7,6 +7,8 @@ from reportlab.pdfgen import canvas
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType, Disposition
 from dotenv import load_dotenv
+from reportlab.lib.units import mm
+from reportlab.lib.pagesizes import A4
 
 import os
 import base64
@@ -154,16 +156,17 @@ def buchung_bestätigt(buchungs_id):
 def create_pdf(buchung):
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf')
     filepath = temp_file.name
-    c = canvas.Canvas(filepath)
+    c = canvas.Canvas(filepath, pagesize=A4)
 
-    c.setFont("Helvetica-Bold", 14)
-    c.drawCentredString(300, 800, "Rechnung für Ihre Buchung")
+    # Kopfzeile und Titel der Rechnung
+    c.setFont("Helvetica-Bold", 16)
+    c.drawCentredString(105 * mm, 280 * mm, "Rechnung für Ihre Buchung")
     c.setFont("Helvetica", 12)
-    c.drawString(50, 770, f"Buchungsnummer: {buchung.id}")
+    c.drawString(15 * mm, 270 * mm, f"Buchungsnummer: {buchung.id}")
+    c.line(15 * mm, 265 * mm, 195 * mm, 265 * mm)  # Horizontale Linie
 
-    c.line(50, 760, 550, 760)
-
-    details_y_start = 740
+    # Details der Buchung auflisten
+    details_y_start = 260 * mm
     details = [
         f"Name: {buchung.name}",
         f"Zugnummer: {buchung.zugnummer}",
@@ -173,12 +176,20 @@ def create_pdf(buchung):
         f"Preis: {buchung.preis:.2f} Euro"
     ]
     for detail in details:
-        c.drawString(50, details_y_start, detail)
-        details_y_start -= 20
+        details_y_start -= 10 * mm
+        c.drawString(15 * mm, details_y_start, detail)
+
+    # Logo unter den Details platzieren und zentrieren
+    image_path = os.path.join(os.path.dirname(__file__), 'pics', 'öbblogo.png')
+    image_width = 150 * mm
+    image_height = 150 * mm
+    image_x = (A4[0] - image_width) / 2  # Zentrierung des Bildes auf der Seite
+    image_y = details_y_start - 155 * mm  # Position direkt unter den Details mit etwas Abstand
+
+    c.drawImage(image_path, image_x, image_y, width=image_width, height=image_height, preserveAspectRatio=True)
 
     c.showPage()
     c.save()
-
     temp_file.close()
     return filepath
 
