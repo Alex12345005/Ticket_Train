@@ -13,6 +13,8 @@ from reportlab.lib.pagesizes import A4
 import os
 import base64
 import tempfile
+import random
+import string
 
 load_dotenv()
 
@@ -54,6 +56,11 @@ def calculate_distance(lat1, lon1, lat2, lon2):
     distance = R * c
     return distance
 
+def generate_train_number():
+    numbers = ''.join(random.choices(string.digits, k=3))
+    letters = ''.join(random.choices(string.ascii_uppercase, k=2))
+    return f"{letters}{numbers}"
+
 def send_email_with_attachment(to_emails, subject, content, attachment_path):
     message = Mail(
         from_email='wadu0185@gmail.com',
@@ -89,7 +96,7 @@ def index():
 
     if request.method == 'POST':
         name = request.form.get('name')
-        zugnummer = request.form.get('zugnummer')
+        zugnummer = generate_train_number()
         abfahrtsort = request.form.get('abfahrtsort')
         zielort = request.form.get('zielort')
         abfahrtszeit = datetime.strptime(request.form.get('abfahrtszeit'), '%Y-%m-%dT%H:%M')
@@ -179,12 +186,11 @@ def create_pdf(buchung):
         details_y_start -= 10 * mm
         c.drawString(15 * mm, details_y_start, detail)
 
-    # Logo unter den Details platzieren und zentrieren
     image_path = os.path.join(os.path.dirname(__file__), 'pics', 'öbblogo.png')
     image_width = 150 * mm
     image_height = 150 * mm
-    image_x = (A4[0] - image_width) / 2  # Zentrierung des Bildes auf der Seite
-    image_y = details_y_start - 155 * mm  # Position direkt unter den Details mit etwas Abstand
+    image_x = (A4[0] - image_width) / 2  
+    image_y = details_y_start - 155 * mm 
 
     c.drawImage(image_path, image_x, image_y, width=image_width, height=image_height, preserveAspectRatio=True)
 
