@@ -212,15 +212,24 @@
 
 <style>
     body {
-        font-family: Arial, sans-serif;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
         margin: 0;
+        padding: 0;
+        background: #fafafa;
+        color: #444;
+        line-height: 1.6;
         padding: 20px;
-        background-color: #f0f8ff;
     }
 
-    .header, .footer {
+    .header {
+        background: #333;
+        color: #ffffff;
+        padding: 20px 0;
         text-align: center;
-        margin: 20px 0;
+    }
+
+    .header h1 {
+        margin: 0;
     }
 
     .button-group {
@@ -228,107 +237,113 @@
         margin: 20px 0;
     }
 
-    h1, h2 {
-        color: #003366; 
-    }
-
-    button, input[type=submit] {
-        background-color: #007bff; 
-        color: white;
-        border: none;
-        padding: 10px;
+    .button-group button, .button-group a.button-link {
+        background-color: #5cb85c;
+        color: #ffffff;
+        padding: 10px 15px;
         margin: 5px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        display: inline-block;
     }
 
-    button i, .header i, .footer i {
-        margin-right: 5px;
+    .button-group button:hover, .button-group a.button-link:hover {
+        background-color: #4cae4c;
     }
 
-    button:hover, input[type=submit]:hover {
-        background-color: #0056b3; 
-    }
-
-    form, #buchungenListe {
-        background-color: #e6f0ff; 
+    .form-container {
+        background: #ffffff;
         padding: 20px;
-        margin: 10px auto;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        max-width: 1000px;
+        margin: 20px auto;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        max-width: 800px;
     }
 
     label {
-        margin-top: 10px;
+        display: block;
+        margin-bottom: 10px;
     }
 
-    input, select {
-        margin-bottom: 20px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
+    input[type='text'],
+    select,
+    input[type='email'] {
+        width: 100%;
         padding: 10px;
-        width: calc(100% - 22px);
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
     }
 
-    .stornieren-btn {
-        background-color: #ff4d4d;
+    input[type='submit'] {
+        width: auto;
+        padding: 10px 20px;
+        border: none;
+        background-color: #5cb85c;
         color: white;
-        padding: 5px 10px;
-        text-decoration: none;
-        border-radius: 5px;
-        font-size: 14px;
+        margin-bottom: 0;
+        border-radius: 4px;
+        cursor: pointer;
+        float: right;
     }
 
-    .stornieren-btn:hover {
-        background-color: #cc0000;
+    input[type='submit']:hover {
+        background-color: #4cae4c;
     }
 
-    .download-btn {
-        background-color: #007bff;
-        color: white;
-        padding: 5px 10px;
-        text-decoration: none;
-        border-radius: 5px;
-        font-size: 14px;
-    }
-
-    .download-btn:hover {
-        background-color: #0056b3;
+    .table-container {
+        overflow-x: auto;
     }
 
     table {
         width: 100%;
-        border-collapse: collapse;
         margin-top: 20px;
-        border: 1px solid #007bff;
+        border-collapse: collapse;
     }
 
-    th, td {
-        border: 1px solid #007bff;
-        padding: 15px;
-        text-align: left;
+    th,
+    td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        text-align: center;
+        vertical-align: middle;
     }
 
-    thead th {
-        background-color: #007bff;
-        color: white;
+    th {
+        background-color: #f4f4f4;
     }
 
-    tbody tr:nth-child(even) {
-        background-color: #f2f2f2;
+    tr:nth-child(even) {
+        background-color: #eeeeee;
     }
 
-    tbody tr:hover {
-        background-color: #ddd;
+    tr:hover {
+        background-color: #f4f4f4;
+    }
+
+    a.stornieren-btn {
+        color: #d9534f;
+        text-decoration: none;
+        padding: 5px 10px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+
+    a.stornieren-btn:hover {
+        color: #ffffff;
+        background-color: #d9534f;
+        border-color: #d43f3a;
     }
 
     .footer {
-        font-size: 14px;
-    }
-
-    td.price {
-        white-space: nowrap;
+        text-align: center;
+        padding: 5px 0;
+        background-color: #333;
+        color: #ffffff;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
     }
 </style>
