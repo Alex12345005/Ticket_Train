@@ -69,7 +69,15 @@
             <input type="text" id="zielort" name="zielort" value="{{ zielort }}" required>
 
             <label for="abfahrtszeit">Abfahrtszeit:</label>
-            <input type="datetime-local" id="abfahrtszeit" name="abfahrtszeit" required><br><br>
+            <select id="abfahrtszeit" name="abfahrtszeit_index" required>
+                {% for day_name, times in abfahrtszeit %}
+                <optgroup label="{{ day_name }}">
+                    {% for index, (formatted_time, actual_time) in times|enumerate %}
+                    <option value="{{ index }}">{{ formatted_time }}</option>
+                    {% endfor %}
+                </optgroup>
+                {% endfor %}
+            </select>                                
 
             <label for="reiseklasse">Reiseklasse:</label>
             <select id="reiseklasse" name="reiseklasse" required onchange="updatePrice()">
