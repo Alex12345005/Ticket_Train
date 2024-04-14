@@ -12,3 +12,4 @@ class Buchung(db.Model):
     abfahrtszeit = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     preis = db.Column(db.Float, nullable=False)
     storniert = db.Column(db.Boolean, default=False, nullable=False)
+    reiseklasse = db.Column(db.String(50), nullable=False)

@@ -108,7 +108,13 @@ def index():
             preis = distanz * 0.30 
             preis = round(preis, 2)
 
-        neue_buchung = Buchung(name=name, zugnummer=zugnummer, abfahrtsort=abfahrtsort, zielort=zielort, abfahrtszeit=abfahrtszeit, preis=preis)
+            reiseklasse = request.form.get('reiseklasse')
+            if reiseklasse == "Business":
+                preis *= 1.5  
+            elif reiseklasse == "First":
+                preis *= 2.0  
+
+        neue_buchung = Buchung(name=name, zugnummer=zugnummer, abfahrtsort=abfahrtsort, zielort=zielort, abfahrtszeit=abfahrtszeit, preis=preis, reiseklasse=reiseklasse)
         db.session.add(neue_buchung)
 
         try:
@@ -176,6 +182,7 @@ def create_pdf(buchung):
     details_y_start = 260 * mm
     details = [
         f"Name: {buchung.name}",
+        f"Reiseklasse: {buchung.reiseklasse}",
         f"Zugnummer: {buchung.zugnummer}",
         f"Abfahrtsort: {buchung.abfahrtsort}",
         f"Zielort: {buchung.zielort}",

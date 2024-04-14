@@ -71,14 +71,19 @@
             <label for="abfahrtszeit">Abfahrtszeit:</label>
             <input type="datetime-local" id="abfahrtszeit" name="abfahrtszeit" required><br><br>
 
+            <label for="reiseklasse">Reiseklasse:</label>
+            <select id="reiseklasse" name="reiseklasse" required onchange="updatePrice()">
+                <option value="">Bitte eine Reiseklasse auswählen</option>
+                <option value="Standard">Standard</option>
+                <option value="Business">Business</option>
+                <option value="First">First Class</option>
+            </select><br><br>
+
             <label for="preis">Preis:</label>
             <span id="preis" style="display: inline-block; padding: 5px 10px; background-color: white; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 10px;">
-                {% if preis is not none %}
-                    {{ "{:.2f}".format(preis) }}
-                {% else %}
-                    0.00
-                {% endif %}
-            </span>          
+                0.00 €
+            </span>
+            <input type="hidden" id="basePrice" value="{{ preis }}">      
                                                                                                                                                                                     
             <input type="submit" value="Buchung bestätigen">
         </form>
@@ -120,6 +125,26 @@
         <p>Kontaktieren Sie uns: info@zugreise.com | Impressum</p>
     </div>
     <script>
+        function updatePrice() {
+            var basePrice = parseFloat(document.getElementById('basePrice').value);  // Der Basispreis muss vom Server vorgegeben werden.
+            var classMultiplier = 1;  // Multiplikator für die Reiseklasse
+
+            var selectedClass = document.getElementById('reiseklasse').value;
+            switch (selectedClass) {
+                case "Business":
+                    classMultiplier = 1.5;
+                    break;
+                case "First":
+                    classMultiplier = 2.0;
+                    break;
+                default:
+                    classMultiplier = 1;
+            }
+
+            var finalPrice = basePrice * classMultiplier;
+            document.getElementById('preis').innerText = finalPrice.toFixed(2) + ' €';
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const departure = sessionStorage.getItem('abfahrtsort');
             const destination = sessionStorage.getItem('zielort');
