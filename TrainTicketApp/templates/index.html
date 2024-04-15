@@ -89,8 +89,9 @@
             </select><br><br>
             <label for="preis">Preis:</label>
             <span id="preis" style="display: inline-block; padding: 5px 10px; background-color: white; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 10px;">
-                0.00 €
+                0.00
             </span>
+            <span>€</span>
             <input type="hidden" id="basePrice" value="{{ preis }}">      
             <input type="submit" value="Buchung bestätigen">
         </form>
@@ -133,8 +134,30 @@
     </div>
     <script>
         function updatePrice() {
-            var basePrice = parseFloat(document.getElementById('basePrice').value);
+
+            var basePrice 
+
+            const departure = document.getElementById('abfahrtsort').value
+            console.log(departure)
+            const destination = document.getElementById('zielort').value
+            console.log(destination)
+
+            if (departure && destination) {
+                const departureCoords = stationCoordinates[departure];
+                console.log(departureCoords)
+                const destinationCoords = stationCoordinates[destination];
+                console.log(destinationCoords)
+                if (departureCoords && destinationCoords) {
+                    const distance = calculateDistance(departureCoords[0], departureCoords[1], destinationCoords[0], destinationCoords[1]);
+                    const price = distance * 0.30;
+                    console.log(distance)
+                    basePrice = price.toFixed(2);
+                }
+            }
+            // Der Basispreis muss vom Server vorgegeben werden.
+            console.log(basePrice)
             var classMultiplier = 1;  // Multiplikator für die Reiseklasse
+
             var selectedClass = document.getElementById('reiseklasse').value;
             switch (selectedClass) {
                 case "Business":
@@ -146,9 +169,63 @@
                 default:
                     classMultiplier = 1;
             }
+
             var finalPrice = basePrice * classMultiplier;
-            document.getElementById('preis').innerText = finalPrice.toFixed(2) + ' €';
+            document.getElementById('preis').innerText = finalPrice.toFixed(2);
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const departure = sessionStorage.getItem('abfahrtsort');
+            const destination = sessionStorage.getItem('zielort');
+            if (departure) {
+                document.getElementById('abfahrtsort').value = departure;
+            }
+            if (destination) {
+                document.getElementById('zielort').value = destination;
+            }
+
+            const priceField = document.getElementById('preis');
+            if (departure && destination && priceField) {
+                const departureCoords = stationCoordinates[departure];
+                const destinationCoords = stationCoordinates[destination];
+                if (departureCoords && destinationCoords) {
+                    const distance = calculateDistance(departureCoords.lat, departureCoords.lon, destinationCoords.lat, destinationCoords.lon);
+                    const price = distance * 0.30;
+                    priceField.value = price.toFixed(2);
+                }
+            }
+        });
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = degreesToRadians(lat2-lat1);
+            const dLon = degreesToRadians(lon2-lon1);
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(degreesToRadians(lat1)) * Math.cos(degreesToRadians(lat2)) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2); 
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+            const distance = R * c;
+            return distance;
+        }
+
+        function degreesToRadians(degrees) {
+            return degrees * (Math.PI/180);
+        }
+
+        const stationCoordinates = {
+            "Graz Hauptbahnhof": [47.0667, 15.4333],
+            "Bruck an der Mur": [47.4105, 15.2772],
+            "Leoben Hauptbahnhof": [47.3820, 15.0946],
+            "Kapfenberg": [47.4425, 15.2860],
+            "Frohnleiten": [47.2739, 15.3194],
+            "Knittelfeld": [47.2153, 14.8227],
+            "Mürzzuschlag": [47.6039, 15.6728],
+            "Leibnitz": [46.7812, 15.5452],
+            "Fehring": [46.9311, 15.8950],
+            "Spielfeld-Straß": [46.7184, 15.6484],
+            "Weiz": [47.2167, 15.6167]
+        };
     </script>
 </body>
 </html>

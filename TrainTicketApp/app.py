@@ -204,7 +204,7 @@ def index():
             buchungen = Buchung.query.filter_by(storniert=False).all()
         else:
             buchungen = Buchung.query.filter_by(user_id=session['user_id'], storniert=False).all()
-        return render_template('index.html', buchungen=buchungen, abfahrtszeit=abfahrtszeit)
+        return render_template('index.html', buchungen=buchungen, abfahrtszeit=abfahrtszeit, preis=preis)
 
 @app.route('/map')
 def map_view():
