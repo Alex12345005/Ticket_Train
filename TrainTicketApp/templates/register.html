@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrierung</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="form-container">
+        <h1>Registrierung</h1>
+        {% for message in get_flashed_messages() %}
+            <div class="alert alert-danger">{{ message }}</div>
+        {% endfor %}
+        <form action="/register" method="post">
+            <label for="username">Benutzername:</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label for="password">Passwort:</label>
+            <input type="password" id="password" name="password" required>
+            
+            <input type="submit" value="Registrieren">
+        </form>
+        <div class="link-container">
+            <a href="/login">Schon registriert? Hier anmelden!</a>
+        </div>
+    </div>
+</body>
+</html>
+
+<style>
+    body {
+    font-family: 'Arial', sans-serif;
+    background: #0f0f0f;  /* Dunkler Hintergrund */
+    color: #fff;  /* Weiße Schrift */
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;  /* Vollbildhöhe */
+}
+
+.form-container {
+    background: #222;  /* Sehr dunkles Grau als Hintergrund der Formulare */
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    width: 90%;
+    max-width: 400px;
+}
+
+h1 {
+    color: #4CAF50;  /* Grüne Farbe für Überschriften */
+    margin-bottom: 20px;
+}
+
+label {
+    color: #ccc;  /* Heller Grauton für Text */
+    display: block;
+    margin-bottom: 10px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 2px solid #333;  /* Dunklere Grenze für Elemente */
+    border-radius: 4px;
+    background: #333;  /* Dunkler Hintergrund für Eingabefelder */
+    color: #fff;  /* Weiße Schrift für Eingabefelder */
+    box-sizing: border-box;
+}
+
+input[type="submit"] {
+    background: #4CAF50;  /* Grüner Hintergrund für Schaltflächen */
+    color: #ffffff;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+input[type="submit"]:hover {
+    background: #367c39;  /* Dunklerer Grün-Ton beim Hover */
+}
+
+.alert {
+    padding: 10px;
+    background-color: #f44336; /* Rot für Fehlermeldungen */
+    color: white;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.link-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+a {
+    color: #8bc34a; /* Helle grüne Farbe für Links */
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: #cddc39; /* Helligkeitsänderung bei Hover auf Links */
+}
+
+</style>

@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
-from flask import Flask, redirect, render_template, request, send_file, url_for
-from models import db, Buchung
+from flask import Flask, redirect, render_template, request, send_file, session, url_for
+from models import User, db, Buchung
 from flask import flash
 from sqlalchemy.exc import IntegrityError
 from reportlab.pdfgen import canvas
@@ -19,6 +19,7 @@ import string
 load_dotenv()
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'Test123')
 
 def jinja2_filter_enumerate(sequence):
     return enumerate(sequence)
@@ -111,13 +112,52 @@ def send_email_with_attachment(to_emails, subject, content, attachment_path):
     except Exception as e:
         print(e.message)
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = User.query.filter_by(username=username).first()
+        if user and user.password == password:
+            session['user_id'] = user.id
+            session['is_admin'] = user.is_admin
+            return redirect(url_for('index'))
+        else:
+            flash('Falscher Benutzername oder Passwort', 'error')
+    return render_template('login.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        # Prüfe, ob der Benutzername schon existiert
+        if User.query.filter_by(username=username).first():
+            flash('Benutzername bereits vergeben', 'error')
+            return redirect(url_for('register'))
+        # Erstelle neuen Benutzer
+        new_user = User(username=username, password=password)  # Sicherheitshinweis: Passwörter sollten gehasht gespeichert werden
+        db.session.add(new_user)
+        db.session.commit()
+        flash('Registrierung erfolgreich. Bitte loggen Sie sich ein.', 'success')
+        return redirect(url_for('login'))
+    return render_template('register.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
     preis = None
     abfahrtsort = None
     zielort = None
     abfahrtszeit = generate_random_abfahrtszeiten()
-
+    
     if request.method == 'POST':
         name = request.form.get('name')
         zugnummer = generate_train_number()
@@ -148,7 +188,7 @@ def index():
         elif reiseklasse == "First":
             preis *= 2.0
 
-        neue_buchung = Buchung(name=name, zugnummer=zugnummer, abfahrtsort=abfahrtsort, zielort=zielort, abfahrtszeit=abfahrtszeit_selected, preis=preis, reiseklasse=reiseklasse)
+        neue_buchung = Buchung(user_id=session['user_id'], name=name, zugnummer=zugnummer, abfahrtsort=abfahrtsort, zielort=zielort, abfahrtszeit=abfahrtszeit_selected, preis=preis, reiseklasse=reiseklasse)
         db.session.add(neue_buchung)
         try:
             db.session.commit()
@@ -158,21 +198,13 @@ def index():
             return redirect(url_for('index'))
 
         return redirect(url_for('buchung_bestätigt', buchungs_id=neue_buchung.id))
-
     else:
-        abfahrtsort = request.args.get('abfahrtsort')
-        zielort = request.args.get('zielort')
-        preis = None
-
-        if abfahrtsort and zielort:
-            abfahrtsort_coords = station_coordinates.get(abfahrtsort)
-            zielort_coords = station_coordinates.get(zielort)
-            if abfahrtsort_coords and zielort_coords:
-                distanz = calculate_distance(*abfahrtsort_coords, *zielort_coords)
-                preis = distanz * 0.30
-
-        buchungen = Buchung.query.filter_by(storniert=False).all()
-        return render_template('index.html', buchungen=buchungen, preis=preis, abfahrtsort=abfahrtsort, zielort=zielort, abfahrtszeit=abfahrtszeit)
+        # Hier prüfen wir, ob der Benutzer ein Admin ist und laden entsprechend die Buchungen
+        if session.get('is_admin'):
+            buchungen = Buchung.query.filter_by(storniert=False).all()
+        else:
+            buchungen = Buchung.query.filter_by(user_id=session['user_id'], storniert=False).all()
+        return render_template('index.html', buchungen=buchungen, abfahrtszeit=abfahrtszeit)
 
 @app.route('/map')
 def map_view():

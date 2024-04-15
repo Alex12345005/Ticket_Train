@@ -27,6 +27,10 @@
             }
         }
 
+        function logout() {
+            window.location.href = '/logout';
+        }
+
         document.addEventListener("DOMContentLoaded", function() {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('showBuchungen')) {
@@ -55,19 +59,17 @@
         <button onclick="toggleFormular()"><i class="fas fa-edit"></i> Buchungsformular anzeigen</button>
         <button onclick="toggleBuchungen()"><i class="fas fa-list"></i> Alle Buchungen anzeigen</button>
         <button onclick="window.location.href='/map'"><i class="fas fa-map-marked-alt"></i> Bahnhöfe in der Nähe anzeigen</button>
+        <button onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
     </div>
     
     <div id="buchungsFormular" style="display: none;">
         <form action="/" method="post">
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" required><br><br>
-
             <label for="abfahrtsort">Abfahrtsort:</label>
             <input type="text" id="abfahrtsort" name="abfahrtsort" value="{{ abfahrtsort }}" required>
-
             <label for="zielort">Zielort:</label>
             <input type="text" id="zielort" name="zielort" value="{{ zielort }}" required>
-
             <label for="abfahrtszeit">Abfahrtszeit:</label>
             <select id="abfahrtszeit" name="abfahrtszeit_index" required>
                 {% for day_name, times in abfahrtszeit %}
@@ -78,7 +80,6 @@
                 </optgroup>
                 {% endfor %}
             </select>                                
-
             <label for="reiseklasse">Reiseklasse:</label>
             <select id="reiseklasse" name="reiseklasse" required onchange="updatePrice()">
                 <option value="">Bitte eine Reiseklasse auswählen</option>
@@ -86,13 +87,11 @@
                 <option value="Business">Business</option>
                 <option value="First">First Class</option>
             </select><br><br>
-
             <label for="preis">Preis:</label>
             <span id="preis" style="display: inline-block; padding: 5px 10px; background-color: white; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 10px;">
                 0.00 €
             </span>
             <input type="hidden" id="basePrice" value="{{ preis }}">      
-                                                                                                                                                                                    
             <input type="submit" value="Buchung bestätigen">
         </form>
     </div>
@@ -134,9 +133,8 @@
     </div>
     <script>
         function updatePrice() {
-            var basePrice = parseFloat(document.getElementById('basePrice').value);  // Der Basispreis muss vom Server vorgegeben werden.
+            var basePrice = parseFloat(document.getElementById('basePrice').value);
             var classMultiplier = 1;  // Multiplikator für die Reiseklasse
-
             var selectedClass = document.getElementById('reiseklasse').value;
             switch (selectedClass) {
                 case "Business":
@@ -148,63 +146,9 @@
                 default:
                     classMultiplier = 1;
             }
-
             var finalPrice = basePrice * classMultiplier;
             document.getElementById('preis').innerText = finalPrice.toFixed(2) + ' €';
         }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const departure = sessionStorage.getItem('abfahrtsort');
-            const destination = sessionStorage.getItem('zielort');
-            if (departure) {
-                document.getElementById('abfahrtsort').value = departure;
-            }
-            if (destination) {
-                document.getElementById('zielort').value = destination;
-            }
-
-            const priceField = document.getElementById('preis');
-            if (departure && destination && priceField) {
-                const departureCoords = stationCoordinates[departure];
-                const destinationCoords = stationCoordinates[destination];
-                if (departureCoords && destinationCoords) {
-                    const distance = calculateDistance(departureCoords.lat, departureCoords.lon, destinationCoords.lat, destinationCoords.lon);
-                    const price = distance * 0.30;
-                    priceField.value = price.toFixed(2);
-                }
-            }
-        });
-
-        function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371;
-            const dLat = degreesToRadians(lat2-lat1);
-            const dLon = degreesToRadians(lon2-lon1);
-            const a = 
-                Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(degreesToRadians(lat1)) * Math.cos(degreesToRadians(lat2)) * 
-                Math.sin(dLon/2) * Math.sin(dLon/2); 
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-            const distance = R * c;
-            return distance;
-        }
-
-        function degreesToRadians(degrees) {
-            return degrees * (Math.PI/180);
-        }
-
-        const stationCoordinates = {
-            "Graz Hauptbahnhof": (47.0667, 15.4333),
-            "Bruck an der Mur": (47.4105, 15.2772),
-            "Leoben Hauptbahnhof": (47.3820, 15.0946),
-            "Kapfenberg": (47.4425, 15.2860),
-            "Frohnleiten": (47.2739, 15.3194),
-            "Knittelfeld": (47.2153, 14.8227),
-            "Mürzzuschlag": (47.6039, 15.6728),
-            "Leibnitz": (46.7812, 15.5452),
-            "Fehring": (46.9311, 15.8950),
-            "Spielfeld-Straß": (46.7184, 15.6484),
-            "Weiz": (47.2167, 15.6167)
-        };
     </script>
 </body>
 </html>
